@@ -27,7 +27,7 @@ for col in addCols:
 
 
 # cells can only have 50000 chars in them
-df = splitColsViaCharMax(df, charMax=50000)
+df = splitColsViaCharMax(df, charMax=49999)
 
 columnOrder = sorted(df.columns)
 columnOrder.remove("title")
@@ -73,11 +73,27 @@ for i, row in df.iterrows():
     with open("genes-template.html", "r") as f:
         template = f.read()
 
-    for i, gene in allGeneInfo.iloc[1:].applymap(str).iterrows():
+    tradingCardGeneDf = allGeneInfo.iloc[1:]
+    tradingCardGeneDf = tradingCardGeneDf.applymap(str)
+
+    def canaryFormatter(cValue):
+        text = "We are unaware of third-party property rights claims on uses of this item"
+        if cValue == "False":
+            return ""
+        if not cValue == "True":
+            cValue = cValue.split(" ")[0]
+            text = f"{text} as of {cValue}"
+        text = text + "."
+        return text
+
+    tradingCardGeneDf["canary_notice"] = tradingCardGeneDf["canary_notice"].apply(canaryFormatter)
+    tradingCardGeneDf["uniprot_link"] = tradingCardGeneDf["uniprot_link"].apply(lambda x: x.replace("https://www.uniprot.org/uniprot/", ""))
+
+    for i, gene in tradingCardGeneDf.iterrows():
         geneHtml = template
         for col in allGeneInfo:
             value = gene[col]
-            if value is None:
+            if value in ["None", None, ""]:
                 value = "<span class='none'>No Value</span>"
             key = "{" + col + "}"
             while key in geneHtml:
