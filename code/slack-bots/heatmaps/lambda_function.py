@@ -18,11 +18,13 @@ channel = os.environ['SLACK_CHANNEL']
 def getSheet(ID, sheet):
     resp = r.get(f'https://docs.google.com/spreadsheet/ccc?key={ID}&output=csv')
     print(resp.status_code)
-    return pd.read_csv(io.BytesIO(resp.content))
+    NAs = ['', '#N/A', '#N/A N/A', '#NA', '-1.#IND', '-1.#QNAN', '-NaN', '-nan', '1.#IND', '1.#QNAN', '<NA>', 'NULL', 'NaN', 'nan', 'null']
+    return pd.read_csv(io.BytesIO(resp.content), keep_default_na=False, na_values=NAs)
 
 def uploadFile(f):
     try:
-        response = client.files_upload(channels=channel, file=f, filename=f"HEATMAP ({datetime.now().strftime('%Y-%m-%d-%H')})", filetype="PNG")
+        filename = f"HEATMAP ({datetime.now().strftime('%Y-%m-%d-%H')}).png"
+        response = client.files_upload(channels=channel, file=f, filename=filename, title=filename, filetype="PNG")
         assert response["file"]  # the uploaded file
     except SlackApiError as e:
         # You will get a SlackApiError if "ok" is False
