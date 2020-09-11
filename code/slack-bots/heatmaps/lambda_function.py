@@ -9,6 +9,7 @@ from slack import WebClient
 from slack.errors import SlackApiError
 import requests as r
 from datetime import datetime
+from urllib.parse import parse_qs
 
 
 SPREADSHEET_ID = "1LZCXzBtgey9xv5OH7YGYgp8UMJ27Eyj1aF9IhAW6M6o"
@@ -33,7 +34,12 @@ def uploadFile(f):
         print(f"Got an error: {e.response['error']}")
 
 def lambda_handler(event, context):
-    client.chat_postMessage(channel=channel,text="Generating heatmaps....")
+    try:
+        body = event["queryStringParameters"]
+        uname = body["username"]
+        client.chat_postMessage(channel=channel,text=f"Generating heatmaps for {uname}....")
+    except Exception as e:
+        client.chat_postMessage(channel=channel,text=f"Generating heatmaps via anon request....")    
     
     genes = getSheet(SPREADSHEET_ID, "Genes")
 
@@ -47,9 +53,12 @@ def lambda_handler(event, context):
             plt.figure(figsize=size)
             sns.heatmap(d.astype(int), center=50, cmap="RdYlGn", square=True, annot=True, fmt="d")
             plt.tight_layout()
-            plt.savefig(iBuff, dpi=300)
+            plt.savefig(iBuff, dpi=100)
             iBuff.seek(0)
             uploadFile(iBuff)
+            
+    percComplete = round(((~genes.replace("", np.nan).isna()).sum().sum()/genes.size)*100, 2)
+    client.chat_postMessage(channel=channel,text=f"Total Coverage: {percComplete}%")
     return {
     'statusCode': 200,
     'body': "Done"
