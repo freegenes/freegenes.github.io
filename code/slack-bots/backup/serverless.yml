@@ -1,0 +1,32 @@
+service: slack-bot-heatmap-generate-CLITEST
+provider:
+    name: aws
+    runtime: python3.8
+           
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: 'AWS::Serverless-2016-10-31'
+Description: An AWS Serverless Specification template describing your function.
+Resources:
+  slackbotheatmapgenerate:
+    Type: 'AWS::Serverless::Function'
+    Properties:
+      Handler: lambda_function.lambda_handler
+      Runtime: python3.8
+      CodeUri: .
+      Description: ''
+      MemorySize: 704
+      Timeout: 600
+      Role: >-
+        arn:aws:iam::507722439818:role/service-role/slack-bot-heatmap-generate-role-nrfl2ezd
+      Events:
+        Api1:
+          Type: Api
+          Properties:
+            Path: /slack-bot-heatmap-generate
+            Method: ANY
+      Environment:
+        Variables:
+          SLACK_CHANNEL: '#freegenes'
+          SLACK_VERIFICATION_TOKEN: xoxb-11530054098-1355890418163-ZqNARQZ5UUwbmOatHDp7G7LP
+      Layers:
+        - 'arn:aws:lambda:us-east-1:507722439818:layer:heatmap-depends:1'
