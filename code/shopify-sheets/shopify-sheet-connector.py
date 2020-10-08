@@ -2,6 +2,7 @@ from utils import *
 import re
 import numpy as np
 import shopify
+import shopifyLimitPatch
 from pyactiveresource.connection import ResourceNotFound
 
 SPREADSHEET_ID = "1LZCXzBtgey9xv5OH7YGYgp8UMJ27Eyj1aF9IhAW6M6o"
