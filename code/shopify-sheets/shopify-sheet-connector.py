@@ -2,7 +2,10 @@ from utils import *
 import re
 import numpy as np
 import shopify
+from bleach.linkifier import Linker
 from pyactiveresource.connection import ResourceNotFound
+
+linkify = Linker().linkify
 
 SPREADSHEET_ID = "1LZCXzBtgey9xv5OH7YGYgp8UMJ27Eyj1aF9IhAW6M6o"
 
@@ -98,6 +101,7 @@ for i, row in df.iterrows():
 
     tradingCardGeneDf["canary_notice"] = tradingCardGeneDf["canary_notice"].apply(canaryFormatter)
     tradingCardGeneDf["uniprot_link"] = tradingCardGeneDf["uniprot_link"].apply(lambda x: x.replace("https://www.uniprot.org/uniprot/", ""))
+    tradingCardGeneDf.applymap(str).applymap(linkify)
 
     for i, gene in tradingCardGeneDf.iterrows():
         geneHtml = template
