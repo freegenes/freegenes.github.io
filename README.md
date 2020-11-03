@@ -6,7 +6,23 @@ This repo powers [stanford.freegenes.org](stanford.freegenes.org).
 
 ## Sheets Backend
 
+The backend database lives here: https://docs.google.com/spreadsheets/d/1LZCXzBtgey9xv5OH7YGYgp8UMJ27Eyj1aF9IhAW6M6o/edit?pli=1#gid=954552604
+
 ## Shopify <> Sheets Integration
+
+`shopify-sheet-connector.py` does the following:
+
+1. Pulls all shopify data via the [shopify python api](https://github.com/Shopify/shopify_python_api)
+1. Pushes that data to the `Product Information` and `FedEx Info`sheets of the backend database
+	- If content is longer than 50,000 chars, it's split into two columns
+1. Columns are sorted alphebetically with the exception of the `title` and `handle` fields
+1. Pulls the data stored in the `Packaging` and `Collections` sheets
+1. Iterates through each product and searches for a match in `Packaging` and then sub-matches in `Collections` via the `id` and `composition_collections` columns respectively
+1. Matches `Collections` to genes in the `Genes` sheet by the `composition_genes` and `id` columns respectively
+1. Generates trading cards from each gene using a `genes-template.html` file (eg. a column `animal_type` would be used to fill any `{animal_value}` values found in `genes-tempalte.html`) and exports them to the `genes` directory
+1. Generates gene tables found on the shopify product pages
+1. Pushes said product pages
+
 
 ### Slack bots
 
@@ -35,5 +51,18 @@ If it's triggered by a slack slash command (`/backup`), it will post who request
 
 ![Backup Example (2)](./docs/freegenes-backup-example2.png)
 
+#### "I MANAGE IDS"
+
+This bot makes it easy to reserve the next available *N* BBF10K IDs. After typing ``/get-ids N` (where N is an integer) into slack, a user will be given a list of IDs and asked for confirmation. If they confirm, the bot will add a new row to the bottom of the backend data base with an entry in `id` and `product` for each new ID. The product field is set to TBD with a note as to who reserved it and when.
+
+![Example 1](./docs/freegenes-getnewids-example1.png)
+![Example 2](./docs/freegenes-getnewids-example2.png)
+
+On the backend, one lambda handles both requests: (1) when the user runs `/get-ids N` and (2) when the user clicks the button. The function is *not* running while it waits for user confirmation.
+
+
+#### "I CRAWL LINKS"
+
+WIP 
 
 Written by Gwyn. They can be found at [gwynu.dev](http://gwynu.dev)
