@@ -53,7 +53,7 @@ If it's triggered by a slack slash command (`/backup`), it will post who request
 
 #### "I MANAGE IDS"
 
-This bot makes it easy to reserve the next available *N* BBF10K IDs. After typing ``/get-ids N` (where N is an integer) into slack, a user will be given a list of IDs and asked for confirmation. If they confirm, the bot will add a new row to the bottom of the backend data base with an entry in `id` and `product` for each new ID. The product field is set to TBD with a note as to who reserved it and when.
+This bot makes it easy to reserve the next available *N* BBF10K IDs. After typing `/get-ids N` (where N is an integer) into slack, a user will be given a list of IDs (derived from the `Genes` backend sheet) and asked for confirmation. If they confirm, the bot will add a new row to the bottom of the backend data base with an entry in `id` and `product` for each new ID. The product field is set to TBD with a note as to who reserved it and when.
 
 ![Example 1](./docs/freegenes-getnewids-example1.png)
 ![Example 2](./docs/freegenes-getnewids-example2.png)
