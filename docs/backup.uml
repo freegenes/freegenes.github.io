@@ -1,0 +1,8 @@
+@startuml
+Slack -> "AWS Lambda (init)": Slash command
+Slack <- "AWS Lambda (init)": Initial post to confirm receipt (required by slack)
+"AWS Lambda (init)" -> "AWS Lambda (worker)": Initial Call
+"AWS Cloudwatch" --> "AWS Lambda (worker)": Scheduled run (an alternative init method)
+"AWS Lambda (worker)" -> "Backend Database": GET
+"AWS Lambda (worker)" -> Slack: Post to Slack
+@enduml

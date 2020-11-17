@@ -22,7 +22,9 @@ The backend database lives here: https://docs.google.com/spreadsheets/d/1LZCXzBt
 1. Generates trading cards from each gene using a `genes-template.html` file (eg. a column `animal_type` would be used to fill any `{animal_value}` values found in `genes-tempalte.html`) and exports them to the `genes` directory
 1. Generates gene tables found on the shopify product pages
 1. Pushes said product pages
+1. Turns the host off
 
+It's set to run on startup in an AWS EC2 instance. This instance can be brought up with the `/wizard`slack command. 
 
 ### Slack bots
 
@@ -39,6 +41,8 @@ This bot is run by two AWS Lambda functions - one (`freegenes-heatmap-init`) han
 
 The code of this bot lives [here](./code/slack-bots/heatmaps). It uses a layer stack that packages seaborn and google api tools which can be found [here](./code/slack-bots/layers/) (with some of scipy's c libraries removed due to space constraints).
 
+![Process flow diagram](./docs/heatmap.svg)
+
 #### "I MAKE BACKUPS"
 
 This bot makes backups of the backend sheet.
@@ -51,6 +55,8 @@ If it's triggered by a slack slash command (`/backup`), it will post who request
 
 ![Backup Example (2)](./docs/freegenes-backup-example2.png)
 
+![Process flow diagram](./docs/backup.svg)
+
 #### "I MANAGE IDS"
 
 This bot makes it easy to reserve the next available *N* BBF10K IDs. After typing `/get-ids N` (where N is an integer) into slack, a user will be given a list of IDs (derived from the `Genes` backend sheet) and asked for confirmation. If they confirm, the bot will add a new row to the bottom of the backend data base with an entry in `id` and `product` for each new ID. The product field is set to TBD with a note as to who reserved it and when.
@@ -59,6 +65,8 @@ This bot makes it easy to reserve the next available *N* BBF10K IDs. After typin
 ![Example 2](./docs/freegenes-getnewids-example2.png)
 
 On the backend, one lambda handles both requests: (1) when the user runs `/get-ids N` and (2) when the user clicks the button. The function is *not* running while it waits for user confirmation.
+
+![Process flow diagram](./docs/ids.svg)
 
 
 #### "I CRAWL LINKS"

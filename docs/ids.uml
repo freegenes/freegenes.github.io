@@ -1,0 +1,17 @@
+@startuml
+Slack -> "AWS Lambda": Slash command requesting N IDs
+activate "AWS Lambda"
+Slack <- "AWS Lambda": Initial post to confirm receipt
+deactivate "AWS Lambda"
+"AWS Lambda" -> "AWS Lambda": Self Call (returning to slack ends process)
+activate "AWS Lambda"
+"AWS Lambda" -> "Backend Database": GET
+"AWS Lambda" -> Slack: Post to get user confirmation
+deactivate "AWS Lambda"
+Slack -> "AWS Lambda": Confirm is clicked, triggering new instance
+activate "AWS Lambda"
+"AWS Lambda" -> "Backend Database": GET
+"AWS Lambda" -> "Backend Database": POST with new ids
+"AWS Lambda" -> Slack: Post to notify user task is finished
+deactivate "AWS Lambda"
+@enduml
