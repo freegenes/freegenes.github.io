@@ -2,7 +2,7 @@
 
 > "We need your help. Tell us what useful DNA sequences should be developed for an open biotechnology commons and we will make them for you! What's the catch? Materials will be made available for you and others under the Unilateral OpenMTA so everyone can develop applications that benefit all people and the planet." - [stanford.freegenes.org](https://stanford.freegenes.org)
 
-This repo powers [stanford.freegenes.org](stanford.freegenes.org).
+This repo powers [stanford.freegenes.org](stanford.freegenes.org). Data is stored in google sheets, user facing content in shopify and backups in AWS S3. Controls via slack commands.
 
 ## Sheets Backend
 
