@@ -8,24 +8,8 @@ from google_auth_oauthlib.flow import InstalledAppFlow
 from google.auth.transport.requests import Request
 import pandas as pd
 
-pd.options.mode.chained_assignment = None  # default='warn'
-
 SPREADSHEET_ID = "1LZCXzBtgey9xv5OH7YGYgp8UMJ27Eyj1aF9IhAW6M6o"
 
-def pickleCache(cachedFunction):
-    filename = f"{cachedFunction.__name__}.cache.pkl"
-    try:
-        cache = pickle.load(open(filename, "rb"))
-    except (IOError, ValueError):
-        cache = {}
-
-    def f(*args, **kwargs):
-        if args not in cache:
-            cache[args] = cachedFunction(*args, **kwargs)
-            pickle.dump(cache, open(filename, "wb"))
-        return cache[args]
-
-    return f
 
 def getGenes(getSheet):
     genes = getSheet(SPREADSHEET_ID, "Genes", useFirstRowAsCols=True)
@@ -96,6 +80,7 @@ def authenticateShopify():
 
 
 authenticateShopify()
+
 
 def getShopifyProductData():
     metafieldsToTrack = ["Rack", "harmonized_system_code"]
@@ -173,23 +158,34 @@ def productDataToDF(shopifyProductData):
         flatData[col] = columnArray
     return pd.DataFrame(flatData)
 
+def pickleCache(cachedFunction):
+    filename = f"{cachedFunction.__name__}.cache.pkl"
+    try:
+        cache = pickle.load(open(filename, "rb"))
+    except (IOError, ValueError):
+        cache = {}
+
+    def f(*args, **kwargs):
+        if args not in cache:
+            cache[args] = cachedFunction(*args, **kwargs)
+            pickle.dump(cache, open(filename, "wb"))
+        return cache[args]
+    return f
 
 
 contString = "(cont.)"
 
 
 def splitColsViaCharMax(df, charMax):
-    while df.applymap(lambda x: len(str(x))).max().max() > 49999:
-        dfCols = df.columns
-        for i, row in df.iterrows():
-            for column in dfCols:
-                content = str(row[column])
-                if len(content) > charMax:
-                    df.loc[i, column] = content[0:charMax - 1]
-                    newCol = column + contString
-                    if not newCol in df.columns:
-                        df[newCol] = ""
-                    df.loc[i, newCol] = content[charMax - 1:]
+    dff = df.copy()
+    for i, row in dff.iterrows():
+        for column in dff.columns:
+            if len(str(row[column])) > charMax:
+                df.loc[i, column] = str(row[column])[0:charMax - 1]
+                newCol = column+contString
+                if not newCol in df.columns:
+                    df[newCol] = ""
+                df.loc[i, newCol] = str(row[column])[charMax - 1:]
     return df
 
 
@@ -200,3 +196,4 @@ def recombineSplitColumns(df):
         df[origCol] = df[origCol] + df[col]
         df.drop(columns=col, inplace=True)
     return df
+
