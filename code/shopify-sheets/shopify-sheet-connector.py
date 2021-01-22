@@ -1,9 +1,10 @@
 from utils import *
-import re
+import re, os
 import numpy as np
 import shopify
 from bleach.linkifier import Linker
 from pyactiveresource.connection import ResourceNotFound
+from tqdm import tqdm
 
 linkify = Linker().linkify
 import shopifyLimitPatch
@@ -169,6 +170,7 @@ def canaryFormatter(cValue):
 
 tradingCardGeneDf["canary_notice"] = tradingCardGeneDf["canary_notice"].apply(canaryFormatter)
 tradingCardGeneDf["uniprot_link"] = tradingCardGeneDf["uniprot_link"].apply(lambda x: x.replace("https://www.uniprot.org/uniprot/", ""))
+
 print("Generating trading cards... :baseball:")
 client.chat_postMessage(channel=channel, text="Generating trading cards... :baseball:")
 for i, gene in tradingCardGeneDf.iterrows():
@@ -183,6 +185,13 @@ for i, gene in tradingCardGeneDf.iterrows():
     geneHtml = geneHtml.replace('<a target="_NCBI" href="<span class=\'none\'>No Value</span>"><span class="none">No Value</span></a>', '<span class="none">No Value</span>')
     with open("../../genes/{}.html".format(gene["id"]), "w") as f:
         f.write(geneHtml)
+
+
+client.chat_postMessage(channel=channel, text=f"Creating snapgene images... (this takes a while (often >1h))")
+for gb in tqdm(os.listdir("./../../genbank")):
+    if ".gb" in gb:
+        os.system('/opt/gslbiotech/snapgene-server/snapgene-server.sh --command \'{"request": "generatePNGMap", "inputFile": "/home/ubuntu/freegenes/genbank/'+gb+'", "outputPng": "/home/ubuntu/freegenes/genes/images/'+gb.replace(".gb", ".png")+'"}\' > ~/snapgene.log 2>&1')
+os.system("rm -rf tmp_files")
 
 client.chat_postMessage(channel=channel, text=f"Pushing to github... :page_with_curl:")
 os.system('git add ../../genes && git commit -m "Auto update to genes." && eval "$(ssh-agent -s)" && ssh-add ~/.ssh/github && git push')
