@@ -133,7 +133,7 @@ for i, row in df.iterrows():
     geneEnd = "<!--END:GENES-->"
     for i, gene in geneInfo.iterrows():
         if not pd.isna(gene["trading_card_link"]):
-            gene["gene_name_short"] = "<a target='_freegenes' href='http://" + gene["trading_card_link"] +"'>" + \
+            gene["gene_name_short"] = "<a target='_freegenes' href='http://" + gene["trading_card_link"] +"' style='cursor:pointer;' title='"+gene["description"]+"'>" + \
                                  gene.fillna("")["gene_name_short"] + "</a>"
     geneInfo = geneInfo[["gene_name_short", "gene_name_long", "genbank_protein_id"]]
     geneInfo.rename(columns={"gene_name_short": "Gene", "gene_name_long": "Name", "genbank_protein_id": "NCBI ID"}, inplace=True)
