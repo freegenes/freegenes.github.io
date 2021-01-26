@@ -1,0 +1,5 @@
+*.pyc
+*token.json
+*.pickle
+*.old
+
