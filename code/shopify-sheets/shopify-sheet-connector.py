@@ -172,15 +172,18 @@ for i, row in df.iterrows():
 
     geneInfo = allGeneInfo[allGeneInfo["id"].isin(genes)]
     canaryStatus = set(geneInfo.canary_notice) == {"False"}  # aka we don't have any flagged
+    canary = canaryFormatter(canaryStatus, product_level=True) 
+    print(row["title"], "canary status:", canaryStatus, canary)
 
-    product.body_html = re.sub(f"{canaryStart}.*?{canaryEnd}", canaryStart +
-                               canaryFormatter(canaryStatus, product_level=True) + canaryEnd,
+    product.body_html = re.sub(f"{canaryStart}.*?{canaryEnd}", canaryStart + canary
+                               + canaryEnd,
                                product.body_html, flags=re.DOTALL)
+
 
     status = product.save()
     if status:
         print(f"Pushed genes and canary notice for product {row['title']}")
-        client.chat_postMessage(channel=channel, text=f":ok: Pushed genes for product {row['title']}")
+        client.chat_postMessage(channel=channel, text=f":ok: Pushed genes and canary notice for product {row['title']}")
     else:
         print(f"Encountered issues when pushing genes and/or canary notice for product {row['title']}")
         print("Status:", status)

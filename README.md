@@ -1,4 +1,4 @@
-# Freegenes
+#Freegenes
 
 > "We need your help. Tell us what useful DNA sequences should be developed for an open biotechnology commons and we will make them for you! What's the catch? Materials will be made available for you and others under the Unilateral OpenMTA so everyone can develop applications that benefit all people and the planet." - [stanford.freegenes.org](https://stanford.freegenes.org)
 
@@ -20,9 +20,10 @@ The backend database lives here: https://docs.google.com/spreadsheets/d/1LZCXzBt
 1. Iterates through each product and searches for a match in `Packaging` and then sub-matches in `Collections` via the `id` and `composition_collections` columns respectively
 1. Matches `Collections` to genes in the `Genes` sheet by the `composition_genes` and `id` columns respectively
 1. Generates trading cards from each gene using a `genes-template.html` file (eg. a column `animal_type` would be used to fill any `{animal_value}` values found in `genes-tempalte.html`) and exports them to the `genes` directory
-1. Generates gene tables found on the shopify product pages
-1. Pushes said product pages
-1. Turns the host off
+1. Generates gene tables found on the shopify product pages (replaces anything between `<!--START:GENES-->` and `<!--END:GENES-->`)
+1. Generates canary notices and inserts them between `<!--START:CANARIA-->` and `<!--END:CANARIA-->`
+1. Pushes edited product pages
+1. Turns the host off (if the script dies, the EC2 instance *will not* turn itself off)
 
 It's set to run on startup in an AWS EC2 instance. This instance can be brought up with the `/wizard`slack command. 
 
