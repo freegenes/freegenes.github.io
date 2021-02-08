@@ -217,7 +217,6 @@ for i, gene in tradingCardGeneDf.iterrows():
     with open("../../genes/{}.html".format(gene["id"]), "w") as f:
         f.write(geneHtml)
 
-exit()
 client.chat_postMessage(channel=channel, text=f"Creating snapgene images... (this takes a while (often >1h))")
 for gb in tqdm(os.listdir("./../../genbank")):
     if ".gb" in gb:
