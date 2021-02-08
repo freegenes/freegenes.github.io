@@ -151,10 +151,9 @@ for i, row in df.iterrows():
     geneStart = "<!--START:GENES-->"
     geneEnd = "<!--END:GENES-->"
     for i, gene in geneInfo.iterrows():
-        if not pd.isna(gene["trading_card_link"]):
-            gene["gene_name_short"] = "<a target='_freegenes' href='http://" + gene[
-                "trading_card_link"] + "' style='cursor:pointer;' title='" + gene["description"] + "'>" + \
-                                      gene.fillna("")["gene_name_short"] + "</a>"
+        gene["gene_name_short"] = "<a target='_freegenes' href='http://freegenes.github.io/genes/"+gene["id"]+".html" + \
+            "' style='cursor:pointer;' title='" + gene["description"] + "'>" + \
+                                  gene.fillna("")["gene_name_short"] + "</a>"
     geneInfo = geneInfo[["gene_name_short", "gene_name_long", "genbank_protein_id"]]
     geneInfo.rename(columns={"gene_name_short": "Gene", "gene_name_long": "Name", "genbank_protein_id": "NCBI ID"},
                     inplace=True)
@@ -218,7 +217,7 @@ for i, gene in tradingCardGeneDf.iterrows():
     with open("../../genes/{}.html".format(gene["id"]), "w") as f:
         f.write(geneHtml)
 
-
+exit()
 client.chat_postMessage(channel=channel, text=f"Creating snapgene images... (this takes a while (often >1h))")
 for gb in tqdm(os.listdir("./../../genbank")):
     if ".gb" in gb:
