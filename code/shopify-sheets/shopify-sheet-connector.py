@@ -212,13 +212,29 @@ for i, row in df.iterrows():
     bionetStart = "<!--START:BIONET_DISTS-->"
     bionetEnd = "<!--END:BIONET_DISTS-->"
 
-    bionet = "The bionet enables open peer-peer exchange of functional biomaterials and associated data.\n" + \
-        "This product may also be available from bionet nodes that are more convenient to you. \n" + \
-        "At the moment we are not aware of any other bionet nodes that provide this specific product."
+    bionetText = "<p>The bionet enables open peer-peer exchange of functional biomaterials and associated data.</p>" + \
+        "<p>This product may also be available from bionet nodes that are more convenient to you.</p>" + \
+        "<p>At the moment we are not aware of any other bionet nodes that provide this specific product.</p>"
 
-    #           "Here are other bionet nodes who may be willing to provide you this specific product."
+    if int(row["id"]) in bionet.keys():
+        df = pd.DataFrame(bionet[int(row["id"])], columns=["fname", "lname", "Contact"])
+        df["Name"] = df.fname + " " + df.lname
+        df = df.drop(columns=["fname", "lname"])[["Name", "Contact"]]
 
-    product.body_html = re.sub(f"{bionetStart}.*?{bionetEnd}", bionetStart + bionet
+
+        def link(x):
+            if "@" in x:
+                x = "mailto:" + x
+            return f"<a href='{x}'>{x}</a>"
+
+
+        df.Contact = df.Contact.apply(link)
+        text = df.to_html()
+    else:
+        text = "Here are other bionet nodes who may be willing to provide you this specific product."
+    bionetText = bionetStart + text
+
+    product.body_html = re.sub(f"{bionetStart}.*?{bionetEnd}", bionetStart + bionetText
                                + bionetEnd,
                                product.body_html, flags=re.DOTALL)
 
