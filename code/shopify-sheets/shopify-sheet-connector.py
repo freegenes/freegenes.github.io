@@ -209,6 +209,18 @@ for i, row in df.iterrows():
                                + canaryEnd,
                                product.body_html, flags=re.DOTALL)
 
+    bionetStart = "<!--START:BIONET_DISTS-->"
+    bionetEnd = "<!--END:BIONET_DISTS-->"
+
+    bionet = "The bionet enables open peer-peer exchange of functional biomaterials and associated data.\n" + \
+        "This product may also be available from bionet nodes that are more convenient to you. \n" + \
+        "At the moment we are not aware of any other bionet nodes that provide this specific product."
+
+    #           "Here are other bionet nodes who may be willing to provide you this specific product."
+
+    product.body_html = re.sub(f"{bionetStart}.*?{bionetEnd}", bionetStart + bionet
+                               + bionetEnd,
+                               product.body_html, flags=re.DOTALL)
 
     status = product.save()
     if status:
