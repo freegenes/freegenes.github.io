@@ -5,6 +5,11 @@ import shopify
 from bleach.linkifier import Linker
 from pyactiveresource.connection import ResourceNotFound
 from tqdm import tqdm
+import time
+
+yesPar = {'name': 'Participate in Bionet', 'value': 'Yes'}
+noPar = {'name': 'Participate in Bionet', 'value': 'No'}
+blankContact = {'name': 'Bionet Contact', 'value': 'NA'}
 
 linkify = Linker().linkify
 import shopifyLimitPatch
@@ -87,10 +92,36 @@ client.chat_postMessage(channel=channel, text=f"And the Collections...")
 collections = getSheet(SPREADSHEET_ID, "Collections", useFirstRowAsCols=True)
 client.chat_postMessage(channel=channel, text=f"And the Genes...")
 allGeneInfo = getSheet(SPREADSHEET_ID, "Genes", useFirstRowAsCols=True)
+client.chat_postMessage(channel=channel, text=f"And all of the orders...")
+orders = getAllShopifyOrders()
+client.chat_postMessage(channel=channel, text=f"(and while we're here, let's autofill some note attributes)")
+for o in orders:
+    c=False
+    fields = [a.to_dict()["name"] for a in o.note_attributes]
+    if not noPar["name"] in fields:
+        o.note_attributes.append(shopify.NoteAttribute(noPar))
+        c = True
+    if not blankContact["name"] in fields:
+        c = True
+        o.note_attributes.append(shopify.NoteAttribute(blankContact))
+    if c:
+        o.save()
+        time.sleep(1)
+client.chat_postMessage(channel=channel, text=f"Weaving the bionet... :ringed_planet:")
+bionet = {}
+for o in orders:
+    fields = {a.to_dict()["name"]: a.to_dict()["value"] for a in o.note_attributes}
+    if fields[noPar["name"]]=="Yes":
+        print(fields)
+        info = (o.attributes["customer"].attributes["first_name"], o.attributes["customer"].attributes["last_name"], fields["Bionet Contact"])
+        for l in o.line_items:
+            if not l.attributes["id"] in bionet.keys():
+                bionet[l.attributes["id"]] = []
+            bionet[l.attributes["id"]] = list(set(bionet[l.attributes["id"]] + [info]))
+
 
 client.chat_postMessage(channel=channel,
                         text=f"Now that I have _all that data_, let me do something useful. How about I make some tables? ;)")
-
 
 def canaryFormatter(cValue, product_level=False):
     if product_level:
@@ -181,13 +212,13 @@ for i, row in df.iterrows():
 
     status = product.save()
     if status:
-        print(f"Pushed genes and canary notice for product {row['title']}")
-        client.chat_postMessage(channel=channel, text=f":ok: Pushed genes and canary notice for product {row['title']}")
+        print(f"Pushed genes, bionet tab and canary notice for product {row['title']}")
+        client.chat_postMessage(channel=channel, text=f":ok: Pushed genes, bionet tab and canary notice for product {row['title']}")
     else:
-        print(f"Encountered issues when pushing genes and/or canary notice for product {row['title']}")
+        print(f"Encountered issues when pushing genes, bionet tab and/or canary notice for product {row['title']}")
         print("Status:", status)
         client.chat_postMessage(channel=channel,
-                                text=f":x: Encountered issues when pushing genes and/or canary notice for product {row['title']}")
+                                text=f":x: Encountered issues when pushing genes, bionet tab and/or canary notice for product {row['title']}")
         client.chat_postMessage(channel=channel, text=f":x: Status: {status}")
 with open("genes-template.html", "r") as f:
     template = f.read()
