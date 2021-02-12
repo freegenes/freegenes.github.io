@@ -115,9 +115,10 @@ for o in orders:
         print(fields)
         info = (o.attributes["customer"].attributes["first_name"], o.attributes["customer"].attributes["last_name"], fields["Bionet Contact"])
         for l in o.line_items:
-            if not l.attributes["id"] in bionet.keys():
-                bionet[l.attributes["id"]] = []
-            bionet[l.attributes["id"]] = list(set(bionet[l.attributes["id"]] + [info]))
+            if not l.attributes["product_id"] in bionet.keys():
+                bionet[l.attributes["product_id"]] = []
+            bionet[l.attributes["product_id"]] = list(set(bionet[l.attributes["product_id"]] + [info]))
+print(bionet)
 
 
 client.chat_postMessage(channel=channel,
@@ -216,6 +217,7 @@ for i, row in df.iterrows():
         "<p>This product may also be available from bionet nodes that are more convenient to you.</p>" + \
         "<p>At the moment we are not aware of any other bionet nodes that provide this specific product.</p>"
 
+    print("ID: : :", int(row["id"]))
     if int(row["id"]) in bionet.keys():
         df = pd.DataFrame(bionet[int(row["id"])], columns=["fname", "lname", "Contact"])
         df["Name"] = df.fname + " " + df.lname
@@ -229,7 +231,7 @@ for i, row in df.iterrows():
 
 
         df.Contact = df.Contact.apply(link)
-        text = df.to_html()
+        text = df.to_html(index=False, index_names=False, header=True, escape=False)
         print(f"Found other bionet nodes for {row['title']}")
     else:
         text = "Here are other bionet nodes who may be willing to provide you this specific product."
