@@ -230,6 +230,7 @@ for i, row in df.iterrows():
 
         df.Contact = df.Contact.apply(link)
         text = df.to_html()
+        print(f"Found other bionet nodes for {row['title']}")
     else:
         text = "Here are other bionet nodes who may be willing to provide you this specific product."
     bionetText = bionetStart + text
