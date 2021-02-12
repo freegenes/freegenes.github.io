@@ -1,7 +1,8 @@
 import shopify
 import pickle
 from time import sleep
-import json
+import json, urllib
+import pyactiveresource
 import os.path
 from googleapiclient.discovery import build
 from google_auth_oauthlib.flow import InstalledAppFlow
@@ -158,6 +159,7 @@ def productDataToDF(shopifyProductData):
         flatData[col] = columnArray
     return pd.DataFrame(flatData)
 
+
 def pickleCache(cachedFunction):
     filename = f"{cachedFunction.__name__}.cache.pkl"
     try:
@@ -170,6 +172,7 @@ def pickleCache(cachedFunction):
             cache[args] = cachedFunction(*args, **kwargs)
             pickle.dump(cache, open(filename, "wb"))
         return cache[args]
+
     return f
 
 
@@ -182,7 +185,7 @@ def splitColsViaCharMax(df, charMax):
         for column in dff.columns:
             if len(str(row[column])) > charMax:
                 df.loc[i, column] = str(row[column])[0:charMax - 1]
-                newCol = column+contString
+                newCol = column + contString
                 if not newCol in df.columns:
                     df[newCol] = ""
                 df.loc[i, newCol] = str(row[column])[charMax - 1:]
@@ -197,3 +200,25 @@ def recombineSplitColumns(df):
         df.drop(columns=col, inplace=True)
     return df
 
+
+def getAllShopifyOrders(before=False, after=False, status="any", limit=250):
+    minDate = lambda orders: min(orders, key=lambda o: o.id).attributes["created_at"]
+    maxDate = lambda orders: max(orders, key=lambda o: o.id).attributes["created_at"]
+    try:
+        if before:
+            orders = shopify.Order.find(status=status, created_at_max=before, limit=limit)
+            if len(orders) > 1:
+                orders.extend(getAllShopifyOrders(before=minDate(orders), status=status, limit=limit))
+        elif after:
+            orders = shopify.Order.find(status=status, created_at_min=after, limit=limit)
+            if len(orders) > 1:
+                orders.extend(getAllShopifyOrders(after=maxDate(orders), status=status, limit=limit))
+        else:
+            orders = shopify.Order.find(status=status, limit=limit)
+            orders.extend(getAllShopifyOrders(before=minDate(orders), status=status, limit=limit))
+            orders.extend(getAllShopifyOrders(after=maxDate(orders), status=status, limit=limit))
+        return orders
+    except (urllib.error.HTTPError, pyactiveresource.connection.ClientError):
+        print("Waiting a moment to be polite. (And to not get cut off by the shopify api!)")
+        sleep(2)
+        return getAllShopifyOrders(before=before, after=after, status=status, limit=limit)
