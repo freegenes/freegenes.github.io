@@ -226,8 +226,11 @@ for i, row in df.iterrows():
 
         def link(x):
             if "@" in x:
-                x = "mailto:" + x
-            return f"<a href='{x}'>{x}</a>"
+                x = x.split("@")
+                x[1] = x[1].replace(".", " {dot} ")
+                return "@".join(x)
+            else:
+                return f"<a href='{x}'>{x}</a>"
 
 
         df.Contact = df.Contact.apply(link)
