@@ -214,8 +214,7 @@ for i, row in df.iterrows():
     bionetEnd = "<!--END:BIONET_DISTS-->"
 
     bionetText = "<p>The bionet enables open peer-peer exchange of functional biomaterials and associated data.</p>" + \
-        "<p>This product may also be available from bionet nodes that are more convenient to you.</p>" + \
-        "<p>At the moment we are not aware of any other bionet nodes that provide this specific product.</p>"
+        "<p>This product may also be available from bionet nodes that are more convenient to you.</p>"
 
     print("ID: : :", int(row["id"]))
     if int(row["id"]) in bionet.keys():
@@ -236,9 +235,9 @@ for i, row in df.iterrows():
         df.Contact = df.Contact.apply(link)
         text = df.to_html(index=False, index_names=False, header=True, escape=False)
         print(f"Found other bionet nodes for {row['title']}")
+        bionetText = bionetStart + text
     else:
-        text = "Here are other bionet nodes who may be willing to provide you this specific product."
-    bionetText = bionetStart + text
+        bionetText = bionetStart + "<p>At the moment we are not aware of any other bionet nodes that provide this specific product.</p>"
 
     product.body_html = re.sub(f"{bionetStart}.*?{bionetEnd}", bionetStart + bionetText
                                + bionetEnd,
@@ -268,14 +267,19 @@ client.chat_postMessage(channel=channel, text="Generating trading cards... :base
 for i, gene in tradingCardGeneDf.iterrows():
     geneHtml = template
     for col in allGeneInfo:
-        value = gene[col]
-        if value in ["None", None, ""]:
-            value = "<span class='none'>No Value</span>"
-        key = "{" + col + "}"
-        while key in geneHtml:
-            geneHtml = geneHtml.replace(key, value if (
-                        (col in ["documentation_image", "genbank_file_link"]) or "link" in col) else linkify(
-                value))  # not using built in format due to lacking partials
+        if col is None:
+            continue
+        try:
+            value = gene[col]
+            if pd.isna(value) or value in ["None", None, ""]:
+                value = "<span class='none'>No Value</span>"
+            key = "{" + col + "}"
+            while key in geneHtml:
+                geneHtml = geneHtml.replace(key, value if (
+                            (col in ["documentation_image", "genbank_file_link"]) or "link" in col) else linkify(
+                    value))  # not using built in format due to lacking partials
+        except Exception as e:
+            client.chat_postMessage(channel=channel, text=f":exclamation: Error generating baseball card {gene['id']}, column {col} raised error {e.__class__.__name__}") 
     geneHtml = geneHtml.replace(
         '<a target="_NCBI" href="<span class=\'none\'>No Value</span>"><span class="none">No Value</span></a>',
         '<span class="none">No Value</span>')
