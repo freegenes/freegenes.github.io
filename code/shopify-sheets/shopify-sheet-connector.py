@@ -227,7 +227,7 @@ for i, row in df.iterrows():
             if "@" in x:
                 x = x.split("@")
                 x[1] = x[1].replace(".", " {dot} ")
-                return " {at} "join(x)
+                return " {at} ".join(x)
             else:
                 return f"<a href='{x}'>{x}</a>"
 
