@@ -111,7 +111,7 @@ client.chat_postMessage(channel=channel, text=f"Weaving the bionet... :ringed_pl
 bionet = {}
 for o in orders:
     fields = {a.to_dict()["name"]: a.to_dict()["value"] for a in o.note_attributes}
-    if fields[noPar["name"]]=="Yes":
+    if fields[noPar["name"]]=="Yes" and fields["fulfillment_status"]=="fulfilled":
         print(fields)
         info = (o.attributes["customer"].attributes["first_name"], o.attributes["customer"].attributes["last_name"], fields["Bionet Contact"])
         for l in o.line_items:
