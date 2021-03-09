@@ -201,24 +201,24 @@ def recombineSplitColumns(df):
     return df
 
 
-def getAllShopifyOrders(before=False, after=False, status="any", limit=250):
+def getAllShopifyOrders(before=False, after=False, status="any", limit=250, fulfillment_status=None):
     minDate = lambda orders: min(orders, key=lambda o: o.id).attributes["created_at"]
     maxDate = lambda orders: max(orders, key=lambda o: o.id).attributes["created_at"]
     try:
         if before:
-            orders = shopify.Order.find(status=status, created_at_max=before, limit=limit)
+            orders = shopify.Order.find(status=status, created_at_max=before, limit=limit, fulfillment_status=fulfillment_status)
             if len(orders) > 1:
-                orders.extend(getAllShopifyOrders(before=minDate(orders), status=status, limit=limit))
+                orders.extend(getAllShopifyOrders(before=minDate(orders), status=status, limit=limit, fulfillment_status=fulfillment_status))
         elif after:
-            orders = shopify.Order.find(status=status, created_at_min=after, limit=limit)
+            orders = shopify.Order.find(status=status, created_at_min=after, limit=limit, fulfillment_status=fulfillment_status)
             if len(orders) > 1:
-                orders.extend(getAllShopifyOrders(after=maxDate(orders), status=status, limit=limit))
+                orders.extend(getAllShopifyOrders(after=maxDate(orders), status=status, limit=limit, fulfillment_status=fulfillment_status))
         else:
-            orders = shopify.Order.find(status=status, limit=limit)
-            orders.extend(getAllShopifyOrders(before=minDate(orders), status=status, limit=limit))
-            orders.extend(getAllShopifyOrders(after=maxDate(orders), status=status, limit=limit))
+            orders = shopify.Order.find(status=status, limit=limit, fulfillment_status=fulfillment_status)
+            orders.extend(getAllShopifyOrders(before=minDate(orders), status=status, limit=limit, fulfillment_status=fulfillment_status))
+            orders.extend(getAllShopifyOrders(after=maxDate(orders), status=status, limit=limit, fulfillment_status=fulfillment_status))
         return orders
     except (urllib.error.HTTPError, pyactiveresource.connection.ClientError):
         print("Waiting a moment to be polite. (And to not get cut off by the shopify api!)")
         sleep(2)
-        return getAllShopifyOrders(before=before, after=after, status=status, limit=limit)
+        return getAllShopifyOrders(before=before, after=after, status=status, limit=limit, fulfillment_status=fulfillment_status)

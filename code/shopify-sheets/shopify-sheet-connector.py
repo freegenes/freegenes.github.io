@@ -93,7 +93,7 @@ collections = getSheet(SPREADSHEET_ID, "Collections", useFirstRowAsCols=True)
 client.chat_postMessage(channel=channel, text=f"And the Genes...")
 allGeneInfo = getSheet(SPREADSHEET_ID, "Genes", useFirstRowAsCols=True)
 client.chat_postMessage(channel=channel, text=f"And all of the orders...")
-orders = getAllShopifyOrders()
+orders = getAllShopifyOrders(fulfillment_status="fulfilled")
 client.chat_postMessage(channel=channel, text=f"(and while we're here, let's autofill some note attributes)")
 for o in orders:
     c=False
