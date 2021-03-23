@@ -1,135 +1,106 @@
-LOCUS       Exported                5042 bp ds-DNA     circular SYN 06-AUG-2018
-DEFINITION  synthetic circular DNA
-ACCESSION   .
-VERSION     .
-KEYWORDS    AND-gate-V2.0
-SOURCE      synthetic DNA construct
-  ORGANISM  synthetic DNA construct
-REFERENCE   1  (bases 1 to 5042)
-  AUTHORS   Bonnet J, Yin P, Ortiz ME, Subsoontorn P, Endy D
-  TITLE     Amplifying genetic logic gates.
-  JOURNAL   Science. 2013 May 3;340(6132):599-603. doi: 10.1126/science.1232758.
-            Epub 2013 Mar 28.
-  PUBMED    23539178
-REFERENCE   2  (bases 1 to 5042)
-  AUTHORS   .
-  TITLE     Direct Submission
-  JOURNAL   Exported Aug 6, 2018 from SnapGene Server 1.1.58
-            http://www.snapgene.com
+LOCUS       AND_gate_v2.0           5042 bp ds-DNA     circular     12-MAR-2021
+DEFINITION  .
 FEATURES             Location/Qualifiers
-     source          1..5042
-                     /organism="synthetic DNA construct"
-                     /mol_type="other DNA"
      misc_feature    1..22
-                     /label=BioBrick prefix
-                     /note="BioBrick prefix for parts that do not start with 
-                     ""ATG"""
-     terminator      137..208
-                     /label=rrnB T1 terminator
-                     /note="transcription terminator T1 from the E. coli rrnB 
-                     gene"
-     terminator      224..251
-                     /label=T7Te terminator
-                     /note="phage T7 early transcription terminator"
-     misc_RNA        532..581
-                     /label=sTRSV HHRz
-                     /note="hammerhead ribozyme from the tobacco ringspot virus 
-                     satellite RNA (Khvorova et al., 2003)"
-     RBS             675..683
-                     /label=Shine-Dalgarno sequence
-                     /note="full consensus sequence for ribosome-binding sites 
-                     upstream of start codons in E. coli; complementary to a 
-                     region in the 3' end of the 16S rRNA (Chen et al., 1994)"
-     CDS             690..1403
-                     /codon_start=1
-                     /product="GFP variant that folds robustly even when fused 
-                     to poorly folded proteins (Pedelacq et al., 2006)"
-                     /label=superfolder GFP
-                     /translation="MRKGEELFTGVVPILVELDGDVNGHKFSVRGEGEGDATNGKLTLK
-                     FICTTGKLPVPWPTLVTTLTYGVQCFARYPDHMKQHDFFKSAMPEGYVQERTISFKDDG
-                     TYKTRAEVKFEGDTLVNRIELKGIDFKEDGNILGHKLEYNFNSHNVYITADKQKNGTKA
-                     NFKIRHNVEDGSVQLADHYQQNTPIGDGPVLLPDNHYLSTQSVLSKDPNEKRDHMVLLE
-                     FVTAAGITHGMDELYK"
-     terminator      1426..1497
-                     /label=rrnB T1 terminator
-                     /note="transcription terminator T1 from the E. coli rrnB 
-                     gene"
-     terminator      1513..1540
-                     /label=T7Te terminator
-                     /note="phage T7 early transcription terminator"
+                     /label="prefix Bba"
+                     /ApEinfo_revcolor=#4c4c4c
+                     /ApEinfo_fwdcolor=#4c4c4c
+     misc_feature    23..39
+                     /label="P7 promoter"
+                     /ApEinfo_revcolor=#008040
+                     /ApEinfo_fwdcolor=#008040
+     misc_feature    57..69
+                     /label="P7 promoter"
+                     /ApEinfo_revcolor=#008040
+                     /ApEinfo_fwdcolor=#008040
+     misc_feature    76..128
+                     /label="ATTB-TP901"
+                     /ApEinfo_revcolor=#ff00ff
+                     /ApEinfo_fwdcolor=#ff00ff
+     misc_feature    129..257
+                     /label="B0015"
+                     /ApEinfo_revcolor=#ff0000
+                     /ApEinfo_fwdcolor=#ff0000
+     misc_feature    complement(258..307)
+                     /label="attP TP901"
+                     /ApEinfo_revcolor=#ff00ff
+                     /ApEinfo_fwdcolor=#ff00ff
+     misc_feature    314..363
+                     /label="attB Bxb1"
+                     /ApEinfo_revcolor=#0000ff
+                     /ApEinfo_fwdcolor=#0000ff
+     misc_feature    364..476
+                     /label="J61048"
+                     /ApEinfo_revcolor=#ff0000
+                     /ApEinfo_fwdcolor=#ff0000
+     misc_feature    complement(477..529)
+                     /label="attP Bxb1"
+                     /ApEinfo_revcolor=#0000ff
+                     /ApEinfo_fwdcolor=#0000ff
+     misc_feature    530..604
+                     /label="RiboJ"
+                     /ApEinfo_revcolor=#d59687
+                     /ApEinfo_fwdcolor=#d59687
+     misc_feature    605..691
+                     /label="BCD2_apFAB682"
+                     /ApEinfo_revcolor=#0080ff
+                     /ApEinfo_fwdcolor=#0080ff
+     misc_feature    693..1409
+                     /label="Superfolder registry"
+                     /ApEinfo_revcolor=#b1ff67
+                     /ApEinfo_fwdcolor=#b1ff67
+     misc_feature    1418..1546
+                     /label="B0015"
+                     /ApEinfo_revcolor=#ff0000
+                     /ApEinfo_fwdcolor=#ff0000
      misc_feature    1547..1567
-                     /label=BioBrick suffix
-                     /note="universal suffix for all parts"
-     terminator      1603..1634
-                     /label=tonB terminator
-                     /note="bidirectional E. coli tonB-P14 transcription 
-                     terminator"
-     terminator      1759..1853
-                     /label=lambda t0 terminator
-                     /note="transcription terminator from phage lambda"
-     rep_origin      2345..2567
-                     /label=pSC101 ori
-                     /note="low-copy replication origin that requires the Rep101
-                     protein"
-     CDS             2615..3565
-                     /codon_start=1
-                     /gene="rep101"
-                     /product="RepA protein needed for replication with the 
-                     pSC101 origin"
-                     /label=Rep101
-                     /translation="MSELVVFKANELAISRYDLTEHETKLILCCVALLNPTIENPTRKE
-                     RTVSFTYNQYAQMMNISRENAYGVLAKATRELMTRTVEIRNPLVKGFEIFQWTNYAKFS
-                     SEKLELVFSEEILPYLFQLKKFIKYNLEHVKSFENKYSMRIYEWLLKELTQKKTHKANI
-                     EISLDEFKFMLMLENNYHEFKRLNQWVLKPISKDLNTYSNMKLVVDKRGRPTDTLIFQV
-                     ELDRQMDLVTELENNQIKMNGDKIPTTITSDSYLRNGLRKTLHDALTAKIQLTSFEAKF
-                     LSDMQSKHDLNGSFSWLTQKQRTTLENILAKYGRI"
-     CDS             3854..4714
-                     /codon_start=1
-                     /gene="bla"
-                     /product="beta-lactamase"
-                     /label=AmpR
-                     /note="confers resistance to ampicillin, carbenicillin, and
-                     related antibiotics"
-                     /translation="MSIQHFRVALIPFFAAFCLPVFAHPETLVKVKDAEDQLGARVGYI
-                     ELDLNSGKILESFRPEERFPMMSTFKVLLCGAVLSRIDAGQEQLGRRIHYSQNDLVEYS
-                     PVTEKHLTDGMTVRELCSAAITMSDNTAANLLLTTIGGPKELTAFLHNMGDHVTRLDRW
-                     EPELNEAIPNDERDTTMPVAMATTLRKLLTGELLTLASRQQLIDWMEADKVAGPLLRSA
-                     LPAGWFIADKSGAGERGSRGIIAALGPDGKPSRIVVIYTTGSQATMDERNRQIAEIGAS
-                     LIKHW"
-     terminator      4844..4873
-                     /label=T3Te terminator
-                     /note="phage T3 early transcription terminator"
-     terminator      4967..4996
-                     /label=T3Te terminator
-                     /note="phage T3 early transcription terminator"
+                     /label="suffix BBa"
+                     /ApEinfo_revcolor=#ffef86
+                     /ApEinfo_fwdcolor=#ffef86
+     misc_feature    1662..1681
+                     /label="VR primer "
+                     /ApEinfo_revcolor=#4c4c4c
+                     /ApEinfo_fwdcolor=#4c4c4c
+     misc_feature    1730..3766
+                     /label="pSC101"
+                     /ApEinfo_revcolor=#666666
+                     /ApEinfo_fwdcolor=#666666
+     misc_feature    3775..4717
+                     /label="Amp resistance"
+                     /ApEinfo_revcolor=#f58a5e
+                     /ApEinfo_fwdcolor=#f58a5e
+     misc_feature    4797..4816
+                     /label="VF2 primer"
+                     /ApEinfo_revcolor=#f58a5e
+                     /ApEinfo_fwdcolor=#f58a5e
 ORIGIN
-        1 gaattcgcgg ccgcttctag agaaaaaatt tatttgcttt cgcatctttt tgtacctata
-       61 atgtgtggaa agcttatgcc aacacaatta acatctcaat caaggtaaat gctttttgct
-      121 ttttttgccc aggcatcaaa taaaacgaaa ggctcagtcg aaagactggg cctttcgttt
+        1 gaattcgcgg ccgcttctag agAAAAAATT TATTTGCTTt cgcatctttt tgtaccTATA
+       61 ATGTGTGGAA AGCTTATGCC AACACAATTA ACATCTCAAT CAAGGTAAAT GCTTTTTGCT
+      121 TTTTTTGCcc aggcatcaaa taaaacgaaa ggctcagtcg aaagactggg cctttcgttt
       181 tatctgttgt ttgtcggtga acgctctcta ctagagtcac actggctcac cttcgggtgg
       241 gcctttctgc gtttataaaa ggagtttttt agttacctta attgaaataa acgaaataaa
-      301 aactcgcgct agctcggccg gcttgtcgac gacggcggtc tccgtcgtca ggatcatccg
-      361 ggcccggctt atcggtcagt ttcacctgat ttacgtaaaa acccgcttcg gcgggttttt
-      421 gcttttggag gggcagaaag atgaatgact gtccacgacg ctatacccaa aagaaagggt
-      481 ttgtaccgta caccactgag accgcggtgg ttgaccagac aaaccacgaa gctgtcaccg
-      541 gatgtgcttt ccggtctgat gagtccgtga ggacgaaaca gcctctacaa ataattttgt
-      601 ttaagggccc aagttcactt aaaaaggaga tcaacaatga aagcaatttt cgtactgaaa
-      661 catcttaatc atgctaagga ggttttctaa tgcgtaaagg cgaagagctg ttcactggtg
+      301 aactcgcGCT AGCTCGGCCG GCTTGTCGAC GACGGCGGTC TCCGTCGTCA GGATCATCCG
+      361 GGCccggctt atcggtcagt ttcacctgat ttacgtaaaa acccgcttcg gcgggttttt
+      421 gcttttggag gggcagaaag atgaatgact gtccacgacg ctatacccaa aagaaaGGGT
+      481 TTGTACCGTA CACCACTGAG ACCGCGGTGG TTGACCAGAC AAACCACGAA GCTGTCACCG
+      541 GATGTGCTTT CCGGTCTGAT GAGTCCGTGA GGACGAAACA GCCTCTACAA ATAATTTTGT
+      601 TTAAGGGCCC AAGTTCACTT AAAAAGGAGA TCAACAATGA AAGCAATTTT CGTACTGAAA
+      661 CATCTTAATC ATGCTAAGGA GGTTTTCTAA Tgcgtaaagg cgaagagctg ttcactggtg
       721 tcgtccctat tctggtggaa ctggatggtg atgtcaacgg tcataagttt tccgtgcgtg
       781 gcgagggtga aggtgacgca actaatggta aactgacgct gaagttcatc tgtactactg
       841 gtaaactgcc ggtaccttgg ccgactctgg taacgacgct gacttatggt gttcagtgct
       901 ttgctcgtta tccggaccat atgaagcagc atgacttctt caagtccgcc atgccggaag
       961 gctatgtgca ggaacgcacg atttccttta aggatgacgg cacgtacaaa acgcgtgcgg
-     1021 aagtgaaatt tgaaggcgat actctggtaa accgcattga gctgaaaggc attgacttta
+     1021 aagtgaaatt tgaaggcgat accctggtaa accgcattga gctgaaaggc attgacttta
      1081 aagaagacgg caatatcctg ggccataagc tggaatacaa ttttaacagc cacaatgttt
-     1141 acatcaccgc cgataaacaa aaaaatggca ctaaagcgaa ttttaaaatt cgccacaacg
+     1141 acatcaccgc cgataaacaa aaaaatggca ttaaagcgaa ttttaaaatt cgccacaacg
      1201 tggaggatgg cagcgtgcag ctggctgatc actaccagca aaacactcca atcggtgatg
      1261 gtcctgttct gctgccagac aatcactatc tgagcacgca aagcgttctg tctaaagatc
      1321 cgaacgagaa acgcgatcat atggttctgc tggagttcgt aaccgcagcg ggcatcacgc
      1381 atggtatgga tgaactgtac aaatgatgat actagagcca ggcatcaaat aaaacgaaag
      1441 gctcagtcga aagactgggc ctttcgtttt atctgttgtt tgtcggtgaa cgctctctac
-     1501 tagagtcaca ctggctcacc ttcgggtggg cctttctgcg tttatatact agtagcggcc
-     1561 gctgcaggag tcactaaggg ttagttagtt agattagcag aaagtcaaaa gcctccgacc
+     1501 tagagtcaca ctggctcacc ttcgggtggg cctttctgcg tttataTACT AGTAGCGGCC
+     1561 GCTGCAGgag tcactaaggg ttagttagtt agattagcag aaagtcaaaa gcctccgacc
      1621 ggaggctttt gactaaaact tcccttgggg ttatcattgg ggctcactca aaggcggtaa
      1681 tcagataaaa aaaatcctta gctttcgcta aggatgattt ctgctagagc tgtcagacca
      1741 agtttacgag ctcgcttgga ctcctgttga tagatccagt aatgacctca gaactccatc

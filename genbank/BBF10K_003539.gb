@@ -1,26 +1,19 @@
-LOCUS       Exported                9642 bp ds-DNA     circular SYN 24-SEP-2020
-DEFINITION  synthetic linear DNA.
+LOCUS       Exported                9642 bp ds-DNA     circular SYN 16-MAR-2020
+DEFINITION  synthetic circular DNA
 ACCESSION   .
 VERSION     .
 KEYWORDS    .
 SOURCE      synthetic DNA construct
   ORGANISM  synthetic DNA construct
 REFERENCE   1  (bases 1 to 9642)
-  AUTHORS   Keoni Gandall
+  AUTHORS   David Gordon
   TITLE     Direct Submission
-  JOURNAL   Exported from Poly.
-REFERENCE   2  (bases 1 to 9642)
-  AUTHORS   .
-  TITLE     Direct Submission
-  JOURNAL   Exported Thursday, Sep 24, 2020 from SnapGene 5.0.7
+  JOURNAL   Exported Wednesday, Mar 25, 2020 from SnapGene Viewer 5.0.8
             https://www.snapgene.com
 FEATURES             Location/Qualifiers
      source          1..9642
                      /organism="synthetic DNA construct"
                      /mol_type="other DNA"
-     terminator      1..9642
-                     /label=T7 terminator
-                     /note="""transcription terminator for bacteriophage T7 RNA"
      LTR             1..634
                      /label=5' LTR
                      /note="5' long terminal repeat (LTR) from HIV-1"
@@ -41,21 +34,57 @@ FEATURES             Location/Qualifiers
                      /label=EF-1-alpha promoter
                      /note="strong constitutive promoter for human elongation 
                      factor EF-1-alpha"
-     CDS             3544..4383
+     intron          2568..3510
+                     /label=EF-1-alpha intron A
+                     /note="intron upstream of the start codon"
+     misc_feature    3535
+                     /label=MCS
+                     /note="multiple cloning site"
+     misc_feature    join(3536..3540,4384)
+                     /label=MCS
+     misc_feature    3544..4284
+                     /label=GFP
+     CDS             3544..4260
                      /codon_start=1
-                     /label=eGFP
+                     /product="enhanced GFP"
+                     /label=EGFP
+                     /note="mammalian codon-optimized"
                      /translation="MVSKGEELFTGVVPILVELDGDVNGHKFSVSGEGEGDATYGKLTL
                      KFICTTGKLPVPWPTLVTTLTYGVQCFSRYPDHMKQHDFFKSAMPEGYVQERTIFFKDD
                      GNYKTRAEVKFEGDTLVNRIELKGIDFKEDGNILGHKLEYNYNSHNVYIMADKQKNGIK
                      VNFKIRHNIEDGSVQLADHYQQNTPIGDGPVLLPDNHYLSTQSALSKDPNEKRDHMVLL
-                     EFVTAAGITLGMDELYKVRPLEGGGGWSHPQFEKGGGSGGGSGGGSWSHPQFEKGPV"
+                     EFVTAAGITLGMDELYK"
+     misc_feature    4288..4383
+                     /label=C terminal Strep tag
+     CDS             4288..4311
+                     /codon_start=1
+                     /product="peptide that binds Strep-Tactin(R), an engineered
+                     form of streptavidin"
+                     /label=Strep-Tag II
+                     /translation="WSHPQFEK"
+     CDS             4348..4371
+                     /codon_start=1
+                     /product="peptide that binds Strep-Tactin(R), an engineered
+                     form of streptavidin"
+                     /label=Strep-Tag II
+                     /translation="WSHPQFEK"
+     misc_feature    4385..4389
+                     /label=MCS
+                     /note="multiple cloning site"
      misc_feature    4392..4965
                      /label=IRES
                      /note="internal ribosome entry site (IRES) of the 
                      encephalomyocarditis virus (EMCV)"
      CDS             4998..5597
+                     /codon_start=1
+                     /gene="pac from Streptomyces alboniger"
+                     /product="puromycin N-acetyltransferase"
                      /label=PuroR
-                     /note="puromycin N-acetyltransferase"
+                     /note="confers resistance to puromycin"
+                     /translation="MTEYKPTVRLATRDDVPRAVRTLAAAFADYPATRHTVDPDRHIER
+                     VTELQELFLTRVGLDIGKVWVADDGAAVAVWTTPESVEAGAVFAEIGPRMAELSGSRLA
+                     AQQQMEGLLAPHRPKEPAWFLATVGVSPDHQGKGLGSAVVLPGVEAAERAGVPAFLETS
+                     APRNLPFYERLGFTVTADVEVPEGPRTWCMTRKPGA"
      misc_feature    5611..6199
                      /label=WPRE
                      /note="woodchuck hepatitis virus posttranscriptional 
@@ -63,10 +92,6 @@ FEATURES             Location/Qualifiers
      LTR             6406..7039
                      /label=3' LTR
                      /note="3' long terminal repeat (LTR) from HIV-1"
-     primer_bind     complement(7167..7183)
-                     /label=M13 rev
-                     /note="common sequencing primer, one of multiple similar 
-                     variants"
      rep_origin      complement(7569..8157)
                      /direction=LEFT
                      /label=ori
@@ -74,7 +99,9 @@ FEATURES             Location/Qualifiers
                      replication"
      CDS             complement(8328..9188)
                      /codon_start=1
-                     /label=bla
+                     /gene="bla"
+                     /product="beta-lactamase"
+                     /label=AmpR
                      /note="confers resistance to ampicillin, carbenicillin, and
                      related antibiotics"
                      /translation="MSIQHFRVALIPFFAAFCLPVFAHPETLVKVKDAEDQLGARVGYI
@@ -84,8 +111,8 @@ FEATURES             Location/Qualifiers
                      LPAGWFIADKSGAGERGSRGIIAALGPDGKPSRIVVIYTTGSQATMDERNRQIAEIGAS
                      LIKHW"
      promoter        complement(9189..9293)
-                     /label=bla promoter
-                     /note="ampicillin resistance gene promoter"
+                     /gene="bla"
+                     /label=AmpR promoter
 ORIGIN
         1 tggaagggct aattcactcc caaagaagac aagatatcct tgatctgtgg atctaccaca
        61 cacaaggcta cttccctgat tagcagaact acacaccagg gccaggggtc agatatccac
