@@ -7,6 +7,7 @@ from pyactiveresource.connection import ResourceNotFound
 from tqdm import tqdm
 import time
 from hashlib import sha1
+import socket
 
 yesPar = {'name': 'Participate in Bionet', 'value': 'Yes'}
 noPar = {'name': 'Participate in Bionet', 'value': 'No'}
@@ -110,7 +111,12 @@ client.chat_postMessage(channel=channel, text=f"(and while we're here, let's aut
 
 pushGeneInfo = allGeneInfo.copy()
 pushGeneInfo["row-hash"] = allGeneInfo.apply(lambda row: sha1("---".join([str(row[x]) for x in allGeneInfo.columns if not x=="row_hash"]).encode()).hexdigest()[0:8], axis=1)
-updateSheet(pushGeneInfo.applymap(str).replace("None", ""), SPREADSHEET_ID, "Genes")
+try:
+    updateSheet(pushGeneInfo.applymap(str).replace("None", ""), SPREADSHEET_ID, "Genes")
+except socket.timeout:
+    print(":alarm_clock::alarm_clock::alarm_clock: Could not push gene info to 'Genes' table; likely due to a poor connection")
+    client.chat_postMessage(channel=channel, text=f"!!!WARNING!!! Could not push gene info to 'Genes' table; likely due to a poor connection")
+
 allGeneInfo["changed"] = ~(pushGeneInfo["row-hash"]==allGeneInfo["row-hash"])
 
 for o in orders:
@@ -166,7 +172,7 @@ for i, row in df.iterrows():
             f"!!! ERROR   !!! Could not find any matches for {row['title']} with an id of {row['id']} in packaging. Error: {e}")
         client.chat_postMessage(channel=channel,
                                 text=f":x: Could not find any matches for {row['title']} with an id of {row['id']} in packaging. Error: {e}")
-        continue
+        raise e
     packages = packaging[packaging["id"].replace("", -1).astype(int) == int(row["id"])]
     if not len(packages) == 1:
         client.chat_postMessage(channel=channel,
