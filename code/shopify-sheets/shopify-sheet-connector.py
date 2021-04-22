@@ -296,7 +296,7 @@ client.chat_postMessage(channel=channel, text="Generating trading cards... :base
 for i, gene in tradingCardGeneDf.iterrows():
     geneHtml = template
     for col in allGeneInfo:
-        if col is None:
+        if col in ["None", None, ""] or pd.isna(col):
             continue
         try:
             value = gene[col]
