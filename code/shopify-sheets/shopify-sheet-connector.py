@@ -6,6 +6,7 @@ from bleach.linkifier import Linker
 from pyactiveresource.connection import ResourceNotFound
 from tqdm import tqdm
 import time
+from hashlib import sha1
 
 yesPar = {'name': 'Participate in Bionet', 'value': 'Yes'}
 noPar = {'name': 'Participate in Bionet', 'value': 'No'}
@@ -29,6 +30,15 @@ client = WebClient(token=token)
 
 client.chat_postMessage(channel=channel, text=f":wave: Hi! I'm the freegenes wizard. Let's get to work!")
 
+getSheet, updateSheet, sheets, service = authenticateGS()
+
+client.chat_postMessage(channel=channel, text=f"Getting settings from 'Wizard Settings' sheet...")
+
+settings = getSheet(SPREADSHEET_ID, "Wizard Settings", useFirstRowAsCols=True)
+d = settings.to_dict()
+settings = {d["Option"][i]: d["Value"][i] for i in d["Option"].keys()}
+
+
 client.chat_postMessage(channel=channel, text=f"First, let me get you a heatmap...")
 import requests as r
 
@@ -45,7 +55,6 @@ data = getShopifyProductData()
 shopify.CarrierService.find()
 df = productDataToDF(data)
 
-getSheet, updateSheet, sheets, service = authenticateGS()
 
 client.chat_postMessage(channel=channel, text=f"Now, let me get FedEx info from google sheets...")
 
@@ -82,6 +91,7 @@ client.chat_postMessage(channel=channel, text=f"Okay! Let me push that to the go
 
 # dff = dff.applymap(lambda x: x[0:40000] if len(x)>40000 else x)
 updateSheet(dff, SPREADSHEET_ID, "Product Information")
+updateSheet(dff, SPREADSHEET_ID, "Product Information")
 client.chat_postMessage(channel=channel, text=f":muscle: Pushed!")
 
 df = recombineSplitColumns(df)
@@ -95,6 +105,14 @@ allGeneInfo = getSheet(SPREADSHEET_ID, "Genes", useFirstRowAsCols=True)
 client.chat_postMessage(channel=channel, text=f"And all of the orders...")
 orders = getAllShopifyOrders(fulfillment_status="fulfilled")
 client.chat_postMessage(channel=channel, text=f"(and while we're here, let's autofill some note attributes)")
+
+
+
+pushGeneInfo = allGeneInfo.copy()
+pushGeneInfo["row-hash"] = allGeneInfo.apply(lambda row: sha1("---".join([str(row[x]) for x in allGeneInfo.columns if not x=="row_hash"]).encode()).hexdigest()[0:8], axis=1)
+updateSheet(pushGeneInfo.applymap(str).replace("None", ""), SPREADSHEET_ID, "Genes")
+allGeneInfo["changed"] = ~(pushGeneInfo["row-hash"]==allGeneInfo["row-hash"])
+
 for o in orders:
     c=False
     fields = [a.to_dict()["name"] for a in o.note_attributes]
@@ -111,7 +129,7 @@ client.chat_postMessage(channel=channel, text=f"Weaving the bionet... :ringed_pl
 bionet = {}
 for o in orders:
     fields = {a.to_dict()["name"]: a.to_dict()["value"] for a in o.note_attributes}
-    if fields[noPar["name"]]=="Yes" and fields["fulfillment_status"]=="fulfilled":
+    if fields[noPar["name"]]=="Yes" and o.attributes["fulfillment_status"]=="fulfilled":
         print(fields)
         info = (o.attributes["customer"].attributes["first_name"], o.attributes["customer"].attributes["last_name"], fields["Bionet Contact"])
         for l in o.line_items:
@@ -179,6 +197,10 @@ for i, row in df.iterrows():
         genes.remove("")
 
     geneInfo = allGeneInfo[allGeneInfo["id"].isin(genes)]
+    if all(geneInfo["changed"]):
+        continue
+        if geall(neInfo["changed"]):
+            continue
 
     geneStart = "<!--START:GENES-->"
     geneEnd = "<!--END:GENES-->"
@@ -190,6 +212,7 @@ for i, row in df.iterrows():
     geneInfo.rename(columns={"gene_name_short": "Gene", "gene_name_long": "Name", "genbank_protein_id": "NCBI ID"},
                     inplace=True)
 
+    geneInfo = geneInfo[[x for x in geneInfo.columns if not x is None]]
     geneInfo = geneInfo.replace("", np.nan).dropna(how="all", axis=1).dropna(how="all").fillna(value=np.nan)
     table = geneInfo.to_html(index=False, index_names=False, header=True, escape=False,
                              na_rep="", formatters={
@@ -286,11 +309,21 @@ for i, gene in tradingCardGeneDf.iterrows():
     with open("../../genes/{}.html".format(gene["id"]), "w") as f:
         f.write(geneHtml)
 
-client.chat_postMessage(channel=channel, text=f"Creating snapgene images... (this takes a while (often >1h))")
-for gb in tqdm(os.listdir("./../../genbank")):
-    if ".gb" in gb:
-        os.system('/opt/gslbiotech/snapgene-server/snapgene-server.sh --command \'{"request": "generatePNGMap", "inputFile": "/home/ubuntu/freegenes/genbank/'+gb+'", "outputPng": "/home/ubuntu/freegenes/genes/images/'+gb.replace(".gb", ".png")+'"}\' > ~/snapgene.log 2>&1')
-os.system("rm -rf tmp_files")
+if settings["Generate Snapgene Images"] in ["TRUE", True, "Changed"]:
+    if settings["Generate Snapgene Images"] == "Changed":
+        client.chat_postMessage(channel=channel, text=f"Creating snapgene images for genes that have been edited...")
+        genbanks = os.listdir("./../../genbank")
+
+    else:
+        client.chat_postMessage(channel=channel, text=f"Creating all snapgene images... (this takes a while (often >1h))")
+        genbanks = os.listdir("./../../genbank")
+    for gb in tqdm():
+        if ".gb" in gb:
+            os.system('/opt/gslbiotech/snapgene-server/snapgene-server.sh --command \'{"request": "generatePNGMap", "inputFile": "/home/ubuntu/freegenes/genbank/'+gb+'", "outputPng": "/home/ubuntu/freegenes/genes/images/'+gb.replace(".gb", ".png")+'"}\' > ~/snapgene.log 2>&1')
+    os.system("rm -rf tmp_files")
+else:
+    client.chat_postMessage(channel=channel, text=f"*Not* generating snapgene images because 'Generate Snapgene Images' is set to "+settings["Generate Snapgene Images"])
+
 
 client.chat_postMessage(channel=channel, text=f"Pushing to github... :page_with_curl:")
 os.system(
