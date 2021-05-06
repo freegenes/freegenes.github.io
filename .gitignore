@@ -2,4 +2,5 @@
 *token.json
 *.pickle
 *.old
+*.csv
 
