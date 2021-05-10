@@ -251,10 +251,17 @@ def getProductGenes(client, shopifyData, collections, packaging):
 def updateGeneTableForProduct(client, shopify, product, productGenes):
     geneStart = "<!--START:GENES-->"
     geneEnd = "<!--END:GENES-->"
-    for i, gene in genes.iterrows():
-        gene["gene_name_short"] = "<a target='_freegenes' href='http://freegenes.github.io/genes/"+gene["id"]+".html" + \
-                                  "' style='cursor:pointer;' title='" + gene["description"] + "'>" + \
-                                  gene.fillna("")["gene_name_short"] + "</a>"
+    productGenes=productGenes.copy()
+    for i, gene in productGenes.iterrows():
+        g = productGenes.loc[i].fillna("")
+        print(productGenes.loc[i, "gene_name_short"])
+        print("<a target='_freegenes' href='http://freegenes.github.io/genes/"+g["id"]+".html" + \
+                                  "' style='cursor:pointer;' title='" + g["description"] + "'>" + \
+                                  g["gene_name_short"] + "</a>")
+        productGenes.loc[i, "gene_name_short"] = "<a target='_freegenes' href='http://freegenes.github.io/genes/"+g["id"]+".html" + \
+                                  "' style='cursor:pointer;' title='" + g["description"] + "'>" + \
+                                  g["gene_name_short"] + "</a>"
+        print(productGenes.loc[i, "gene_name_short"])
     productGenes = productGenes[["gene_name_short", "gene_name_long", "genbank_protein_id", "id"]]
     productGenes.rename(columns={"gene_name_short": "Gene", "gene_name_long": "Name", "genbank_protein_id": "NCBI ID", "id": "Freegenes ID"},
                         inplace=True)
@@ -331,12 +338,14 @@ def updateProductPage(client, product):
 
 
 def generateAndUploadOrdersReport(client, orders):
+    client.chat_postMessage(channel=channel, text=f":eye: :eye: Generating visual compliance report...")
     today = datetime.today()
     df = pd.DataFrame([o.attributes for o in orders])
     df["shipping_address"] = df["shipping_address"].apply(lambda x: x.attributes)
     for key in df["shipping_address"].iloc[0].keys():
         df["shipping_"+key] = df["shipping_address"].apply(lambda x: x[key])
-    sf = df[df["fulfillment_status"] == "fulfilled"][["id", "email", "closed_at", "fulfillment_status"]+[x for x in df.columns if "shipping" in x and x not in ["total_shipping_price_set", "shipping_lines", "shipping_address"]]].copy()
+    df["items_shipped"] = [", ".join([x.attributes["title"] for x in y]) for y in df["line_items"]]
+    sf = df[df["fulfillment_status"] == "fulfilled"][["id", "email", "closed_at", "fulfillment_status", "items_shipped"]+[x for x in df.columns if "shipping" in x and x not in ["total_shipping_price_set", "shipping_lines", "shipping_address"]]].copy()
     sf["closed_at"] = pd.to_datetime(sf["closed_at"], utc=True)
     export = sf[sf["closed_at"].dt.month == (today.month-1)].copy()
     export['closed_at'] = export['closed_at'].apply(lambda a: pd.to_datetime(a).date())
@@ -380,9 +389,9 @@ client.chat_postMessage(channel=channel,
 
 productGenes = getProductGenes(client, shopifyData, collections, packaging)
 for product, geneList in productGenes:
-    updatedProduct = updateGeneTableForProduct(client, shopify, product, genes[genes.id.isin(geneList)])
-    updatedProduct = updateCanaryFlagForProduct(client, shopify, product, genes[genes.id.isin(geneList)])
-    updatedProduct = updateBionetTableForProduct(client, shopify, product, genes[genes.id.isin(geneList)])
+    updatedProduct = product
+    for func in [updateGeneTableForProduct, updateBionetTableForProduct, updateCanaryFlagForProduct, updateBionetTableForProduct]:
+        updatedProduct = func(client, shopify, updatedProduct, genes[genes.id.isin(geneList)])
     updateProductPage(client, updatedProduct)
 
 
