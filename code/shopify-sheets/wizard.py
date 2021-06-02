@@ -117,7 +117,7 @@ def weaveBionet(client, orders):
         fields = {a.to_dict()["name"]: a.to_dict()["value"] for a in o.note_attributes}
         if fields[noPar["name"]] == "Yes" and o.attributes["fulfillment_status"] == "fulfilled":
             info = (o.attributes["customer"].attributes["first_name"], o.attributes["customer"].attributes["last_name"],
-                    fields["Bionet Contact"])
+                    fields["Bionet Contact"], o.attributes["shipping_address"].attributes["country"])
             for l in o.line_items:
                 if not l.attributes["product_id"] in bionet.keys():
                     bionet[l.attributes["product_id"]] = []
@@ -254,14 +254,9 @@ def updateGeneTableForProduct(client, shopify, product, productGenes):
     productGenes=productGenes.copy()
     for i, gene in productGenes.iterrows():
         g = productGenes.loc[i].fillna("")
-        print(productGenes.loc[i, "gene_name_short"])
-        print("<a target='_freegenes' href='http://freegenes.github.io/genes/"+g["id"]+".html" + \
-                                  "' style='cursor:pointer;' title='" + g["description"] + "'>" + \
-                                  g["gene_name_short"] + "</a>")
         productGenes.loc[i, "gene_name_short"] = "<a target='_freegenes' href='http://freegenes.github.io/genes/"+g["id"]+".html" + \
                                   "' style='cursor:pointer;' title='" + g["description"] + "'>" + \
                                   g["gene_name_short"] + "</a>"
-        print(productGenes.loc[i, "gene_name_short"])
     productGenes = productGenes[["gene_name_short", "gene_name_long", "genbank_protein_id", "id"]]
     productGenes.rename(columns={"gene_name_short": "Gene", "gene_name_long": "Name", "genbank_protein_id": "NCBI ID", "id": "Freegenes ID"},
                         inplace=True)
@@ -299,9 +294,10 @@ def updateBionetTableForProduct(client, shopify, product, productGenes):
 
     #print("ID: : :", int(product["id"]))
     if int(product.id) in bionet.keys():
-        df = pd.DataFrame(bionet[int(product.id)], columns=["fname", "lname", "Contact"])
+        df = pd.DataFrame(bionet[int(product.id)], columns=["fname", "lname", "Contact", "Country"])
         df["Name"] = df.fname + " " + df.lname
-        df = df.drop(columns=["fname", "lname"])[["Name", "Contact"]]
+        df = df.drop(columns=["fname", "lname"])[["Name", "Contact", "Country"]]
+        df = df.dropna(how="any")
 
         def link(x):
             if "@" in x:
