@@ -165,6 +165,7 @@ def generateTradingCards(client, genes):
         lambda x: x.replace("https://www.uniprot.org/uniprot/", ""))
     print("Generating trading cards... :baseball:")
     client.chat_postMessage(channel=channel, text="Generating trading cards... :baseball:")
+    genbankErrors = 0
     for i, gene in tradingCardGeneDf.iterrows():
         geneHtml = template
         for col in genes:
@@ -188,9 +189,15 @@ def generateTradingCards(client, genes):
         with open("../../genes/{}.html".format(gene["id"]), "w") as f:
             f.write(geneHtml)
         if not os.path.isfile(f"../../genbank/{gene['id']}.gb"):
-            pass
-            #client.chat_postMessage(text=f":interrobang: Writing {gene['id']}.html but can't find a corresponding genbank file! (until this is fixed, there will be no image on the trading card", channel=channel)
-            print(f"ERROR: Writing {gene['id']}.html but can't find a corresponding genbank file! (until this is fixed, there will be no image on the trading card")
+            genbankErrors = genbankErrors + 1
+            if genbankErrors < 15:
+                client.chat_postMessage(text=f":interrobang: Writing {gene['id']}.html but can't find a corresponding genbank file! (until this is fixed, there will be no image on the trading card)", channel=channel)
+            print(f"ERROR: Writing {gene['id']}.html but can't find a corresponding genbank file! (until this is fixed, there will be no image on the trading card)")
+    if genbankErrors >= 15:
+        client.chat_postMessage(
+        text=f":loudspeaker: There are {genbankErrors} genbank files that *should* exist, but don't. Please add them to the github when you can",
+        channel=channel)
+
 
 def generateSnapgeneImages(client, changed, genes):
     genbanks = os.listdir("./../../genbank")
